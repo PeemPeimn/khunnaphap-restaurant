@@ -119,9 +119,21 @@ const PriceInputBar = (props) => {
   
   // Get a reference to the database service
   const db = getDatabase(app);
+  const dbRef = ref(getDatabase());
+
+  const [ status, setStatus ] = useState("")
 
   const [ value, setValue ] = useState()
   const [ isSubmitted, setSubmit ] = useState(false)
+
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      var s = await get(child(dbRef, 'status')).then((snapshot) => snapshot.val())
+      setStatus(s)
+    }, 500);
+    return () => clearInterval(interval);
+  }, [dbRef]);
 
 
   function handleSubmit() {
@@ -135,35 +147,38 @@ const PriceInputBar = (props) => {
 
   }
   return (
-    <Flex my="100px" boxShadow='0px 10px 30px 0px rgba(0, 0, 0, 0.3)' borderRadius="10px 10px 10px 10px">
-      <NumberInput onChange={ (value) => setValue(value) }
-      width="300px"
-      height="60px"
-      fontSize="24px"
-      value={value}
-      borderColor="transparent"
-      borderRadius="10px 0px 0px 10px"
-      placeholder="Enter the total price.."
-      focusBorderColor="gray"
-      onKeyPress={ event => {
-        if (event.key === 'Enter') {
-          handleSubmit()
-        }
-      }}>  
-        <NumberInputField w="100%" h="100%" borderColor="transparent" borderRadius="10px 0px 0px 10px" fontSize="20px"/>
-      </NumberInput>
-      <IconButton
-        isLoading = { isSubmitted }
-        bgColor={ isSubmitted ? '#d8e2dc' : '#ffd7ba' }
-        _hover={{ bg: "#fec89a" }}
-        borderColor="#d8e2dc !important"
-        border="1px"
-        borderRadius="0px 10px 10px 0px"
-        w="60px"
-        size="lg"
-        icon={<ArrowRightIcon />}
-        onClick={handleSubmit}
-      />
-    </Flex>
+    <Box display="flex" justifyContent="center" flexDirection="column" alignItems="center">
+      <Flex mt="100px" mb="10px" boxShadow='0px 10px 30px 0px rgba(0, 0, 0, 0.3)' borderRadius="10px 10px 10px 10px">
+        <NumberInput onChange={ (value) => setValue(value) }
+        width="300px"
+        height="60px"
+        fontSize="24px"
+        value={value}
+        borderColor="transparent"
+        borderRadius="10px 0px 0px 10px"
+        placeholder="Enter the total price.."
+        focusBorderColor="gray"
+        onKeyPress={ event => {
+          if (event.key === 'Enter') {
+            handleSubmit()
+          }
+        }}>  
+          <NumberInputField w="100%" h="100%" borderColor="transparent" borderRadius="10px 0px 0px 10px" fontSize="20px"/>
+        </NumberInput>
+        <IconButton
+          isLoading = { isSubmitted }
+          bgColor={ isSubmitted ? '#d8e2dc' : '#ffd7ba' }
+          _hover={{ bg: "#fec89a" }}
+          borderColor="#d8e2dc !important"
+          border="1px"
+          borderRadius="0px 10px 10px 0px"
+          w="60px"
+          size="lg"
+          icon={<ArrowRightIcon />}
+          onClick={handleSubmit}
+        />
+      </Flex>
+      <Box fontSize="15px" fontWeight="bold" color="gray"> {status=="" ? "": "Status: " + status }</Box>
+    </Box>
   )
 }
