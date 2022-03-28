@@ -178,7 +178,7 @@ const PriceInputBar = (props) => {
           onClick={handleSubmit}
         />
       </Flex>
-      <Box fontSize="15px" fontWeight="bold" color="gray"> {status=="" ? "": "Status: " + status }</Box>
+      <Box fontSize="15px" fontWeight="bold" color="gray"> {status===" "|| status==="" ? "": "Status: " + status }</Box>
     </Box>
   )
 }
